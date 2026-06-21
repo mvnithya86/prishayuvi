@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Numbers Challenge Part 4 - Roman Numerals & Brackets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover:not([disabled]) {
+      background: #ffe97d;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🔢 Math Quiz - Roman Numerals & Brackets</h2>
+<div id="score">Score: 0</div>
+
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "What is the Hindu-Arabic numeral value of the Roman symbol 'L'?", options: ["50", "100", "500", "10"], answer: 0},
+  {q: "What is the numeral value of 'C'?", options: ["100", "50", "500", "1000"], answer: 0},
+  {q: "What is the Roman numeral for 500?", options: ["D", "M", "C", "L"], answer: 0},
+  {q: "Convert 24 into Roman Numerals.", options: ["XXIV", "XXVI", "XIV", "XXIIII"], answer: 0},
+  {q: "What does the Roman representation 'LXVI' stand for?", options: ["66", "56", "46", "76"], answer: 0},
+  {q: "Which Roman numeral symbol can NEVER be repeated?", options: ["V", "I", "X", "C"], answer: 0},
+  {q: "What is the maximum number of times the symbols I, X, C, and M can be repeated consecutively?", options: ["3 times", "4 times", "2 times", "Unlimited"], answer: 0},
+  {q: "If a smaller symbol is written to the left of a larger symbol, what operation do we do?", options: ["Subtraction", "Addition", "Multiplication", "Division"], answer: 0},
+  {q: "What is the Hindu-Arabic value of XCX?", options: ["It is meaningless/invalid", "90", "110", "100"], answer: 0},
+  {q: "Convert 99 into Roman numerals.", options: ["XCIX", "IC", "LXLIX", "CXX"], answer: 0},
+  {q: "Which of the following values represents 'CLXXV'?", options: ["175", "125", "275", "155"], answer: 0},
+  {q: "Which symbol can never be subtracted from a larger value?", options: ["V", "I", "X", "C"], answer: 0},
+  {q: "What is the correct Roman numeral form for 40?", options: ["XL", "XXXX", "VL", "LX"], answer: 0},
+  {q: "Solve using bracket rule: 4 × (10 + 2)", options: ["48", "42", "16", "40"], answer: 0},
+  {q: "Solve the expression: 100 - (20 + 30)", options: ["50", "110", "90", "60"], answer: 0},
+  {q: "What is the value of 5 + (6 × 2)?", options: ["17", "22", "13", "30"], answer: 0},
+  {q: "Solve this expression: (15 - 5) × (2 + 3)", options: ["50", "25", "15", "45"], answer: 0},
+  {q: "What is the correct value for Roman numeral XCV?", options: ["95", "105", "85", "90"], answer: 0},
+  {q: "According to bracket expanding rules, 7 × 105 can be simplified as:", options: ["7 × (100 + 5)", "7 × 100 + 5", "(7 + 100) × 5", "7 × 10 × 5"], answer: 0},
+  {q: "Thinking Question: Which of the following Roman numerals is written incorrectly?", options: ["VX", "XIV", "XVIII", "XLV"], answer: 0},
+  {q: "Thinking Question: What is the value of Roman numeral CD?", options: ["400", "600", "500", "900"], answer: 0},
+  {q: "Thinking Question: What value do you get if you calculate LX minus XIV?", options: ["XLVI", "LVI", "XLIV", "LIV"], answer: 0},
+  {q: "Solve the multi-bracket logic: 3 × (4 + (2 × 3))", options: ["30", "18", "26", "24"], answer: 0},
+  {q: "What is the value of 80 ÷ (12 - 4)?", options: ["10", "6", "8", "12"], answer: 0},
+  {q: "Thinking Question: What is the Roman numeral for 2026?", options: ["MMXXVI", "MMXXIV", "CCXXVI", "MXXVI"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML =
+      "🎉 Finished Set 2! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<p><b>Question ${current + 26}: ${q.q}</b></p>`;
+
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+
+    if (
+      idx === selectedIndex &&
+      selectedText !== correctTextForCurrentQuestion
+    ) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+
+  document.getElementById("score").innerText = "Score: " + score;
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1300);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
