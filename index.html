@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Numbers Challenge Part 3 - Estimation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover:not([disabled]) {
+      background: #ffe97d;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🔢 Math Quiz - Estimation & Rounding</h2>
+<div id="score">Score: 0</div>
+
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "Round off 73 to the nearest tens.", options: ["70", "80", "75", "700"], answer: 0},
+  {q: "Round off 256 to the nearest tens.", options: ["260", "250", "300", "200"], answer: 0},
+  {q: "What do you get when you round off 8,432 to the nearest hundreds?", options: ["8,400", "8,500", "8,430", "8,000"], answer: 0},
+  {q: "Round off 9,875 to the nearest thousands.", options: ["10,000", "9,000", "9,900", "9,800"], answer: 0},
+  {q: "Estimate the sum of 57 and 34 by rounding each to the nearest tens.", options: ["90", "100", "80", "91"], answer: 0},
+  {q: "Estimate the difference of 86 and 23 by rounding to the nearest tens.", options: ["70", "60", "90", "63"], answer: 1},
+  {q: "What is 435 rounded to the nearest hundreds?", options: ["400", "500", "440", "430"], answer: 0},
+  {q: "If a number is 75, rounding it to the nearest tens gives:", options: ["80", "70", "75", "100"], answer: 0},
+  {q: "Estimate the product of 42 × 68 by rounding each to the nearest tens.", options: ["2,800", "2,400", "3,500", "2,700"], answer: 0},
+  {q: "Round off 49,204 to the nearest thousands.", options: ["49,000", "50,000", "49,200", "40,000"], answer: 0},
+  {q: "Estimate the quotient of 83 ÷ 22 by rounding to the nearest tens.", options: ["4", "3", "5", "40"], answer: 0},
+  {q: "Which of these numbers rounds off to 500 when rounded to the nearest hundreds?", options: ["478", "562", "421", "550"], answer: 0},
+  {q: "Round off the largest 3-digit number to the nearest hundreds.", options: ["1,000", "900", "990", "1,100"], answer: 0},
+  {q: "Estimate the sum: 312 + 489 by rounding to the nearest hundreds.", options: ["800", "700", "801", "790"], answer: 0},
+  {q: "What is 5,500 rounded to the nearest thousands?", options: ["6,000", "5,000", "5,500", "10,000"], answer: 0},
+  {q: "Estimate the difference: 785 - 214 by rounding to the nearest hundreds.", options: ["600", "500", "570", "800"], answer: 0},
+  {q: "Round off 12,945 to the nearest hundreds.", options: ["12,900", "13,000", "12,950", "12,000"], answer: 0},
+  {q: "What is the smallest number that rounds to 30 when rounded to the nearest tens?", options: ["25", "26", "24", "31"], answer: 0},
+  {q: "What is the largest number that rounds to 70 when rounded to the nearest tens?", options: ["74", "75", "73", "69"], answer: 0},
+  {q: "Estimate: 28 × 104 by rounding to the nearest tens.", options: ["3,000", "2,800", "3,300", "2,900"], answer: 0},
+  {q: "Round off 95,123 to the nearest thousands.", options: ["95,000", "96,000", "100,000", "95,100"], answer: 0},
+  {q: "Thinking Question: If a number rounds to 400 to the nearest ten and 400 to the nearest hundred, what could the number be?", options: ["399", "445", "352", "412"], answer: 0},
+  {q: "Thinking Question: A town has 43,628 residents. The newspaper rounds this to the nearest hundred. What do they print?", options: ["43,600", "43,700", "44,000", "43,630"], answer: 0},
+  {q: "Thinking Question: You round a 3-digit number to the nearest thousands and get 1,000. What is the lowest possible number it could be?", options: ["500", "950", "499", "900"], answer: 0},
+  {q: "Round off 1,23,456 to the nearest thousands.", options: ["1,23,000", "1,24,000", "1,20,000", "1,23,500"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML =
+      "🎉 Finished Set 1! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<p><b>Question ${current + 1}: ${q.q}</b></p>`;
+
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+
+    if (
+      idx === selectedIndex &&
+      selectedText !== correctTextForCurrentQuestion
+    ) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+
+  document.getElementById("score").innerText = "Score: " + score;
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1300);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
