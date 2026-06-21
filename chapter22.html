@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Numbers Challenge - Part 2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover:not([disabled]) {
+      background: #ffe97d;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    #result {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🔢 Numbers Quiz - Practice Set 2</h2>
+<div id="score">Score: 0</div>
+
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "How many millions equal 1 crore?", options: ["10 million", "1 million", "100 million", "1000 million"], answer: 0},
+  {q: "In the International system, the place immediately to the left of the Hundred Thousands is:", options: ["Millions", "Ten Thousands", "Billions", "Ten Millions"], answer: 0},
+  {q: "Which symbol correctly compares the numbers: 54,623 ____ 54,263?", options: [">", "<", "=", "+"], answer: 0},
+  {q: "When arranging numbers from the smallest to the greatest, it is called:", options: ["Ascending order", "Descending order", "Place value order", "Expanded order"], answer: 0},
+  {q: "How many millimeters are there in 1 meter?", options: ["1,000", "100", "10", "10,000"], answer: 0},
+  {q: "1 kilometer is equal to how many meters?", options: ["1,000 meters", "100 meters", "10,000 meters", "10 meters"], answer: 0},
+  {q: "How do you write 5,000,000 in words using the International System?", options: ["Five million", "Fifty lakh", "Five hundred thousand", "Five billion"], answer: 0},
+  {q: "What is 100,000 + 1 equal to?", options: ["Successor of 1,00,000", "Predecessor of 1,00,000", "Successor of 99,999", "1,00,000"], answer: 0},
+  {q: "How many digits are present in 10 Million?", options: ["8 digits", "7 digits", "6 digits", "9 digits"], answer: 0},
+  {q: "In the International system, commas are placed after every ________ digits from the right.", options: ["three", "two", "four", "five"], answer: 0},
+  {q: "Which number is the largest among: 89754, 89574, 89745, 89475?", options: ["89754", "89745", "89574", "89475"], answer: 0},
+  {q: "1 gram is equal to how many milligrams?", options: ["1,000", "100", "10", "10,000"], answer: 0},
+  {q: "What is the predecessor of the number 4,32,100?", options: ["4,32,099", "4,32,101", "4,32,000", "4,31,999"], answer: 0},
+  {q: "How many lakhs make 1 million?", options: ["10 lakhs", "1 lakh", "100 lakhs", "5 lakhs"], answer: 0},
+  {q: "Which of the following numbers shows commas placed correctly according to the Indian system?", options: ["7,32,54,321", "73,254,321", "7,325,43,21", "732,54,321"], answer: 0},
+  {q: "Which of the following numbers shows commas placed correctly according to the International system?", options: ["73,254,321", "7,325,432", "452,168,309", "4,521,683"], answer: 2},
+  {q: "If the cost of House A is Rs 45,670 and House B is Rs 45,760, which statement is true?", options: ["House B is costlier", "House A is costlier", "Both cost the same", "House A is double the price"], answer: 0},
+  {q: "How many kilograms make 1 quintal?", options: ["100", "10", "1,000", "50"], answer: 0},
+  {q: "What is the total number of places in the 'Millions' period?", options: ["3", "2", "1", "4"], answer: 0},
+  {q: "Thinking Question: If $A$ is the successor of $B$, then what is the value of $A - B$?", options: ["1", "0", "-1", "2"], answer: 0},
+  {q: "Thinking Question: What is the largest 5-digit number you can make using the digits 2, 9, 0, 4, 6 without repeating any digit?", options: ["96,420", "96,402", "96,240", "99,642"], answer: 0},
+  {q: "Thinking Question: What is the smallest 5-digit number you can make using the digits 3, 1, 8, 0, 5 without starting with zero?", options: ["10,358", "01,358", "13,058", "10,538"], answer: 0},
+  {q: "How many thousands make up 10 Millions?", options: ["10,000 thousands", "1,000 thousands", "100 thousands", "100,000 thousands"], answer: 0},
+  {q: "What is the value of 10 liters in milliliters?", options: ["10,000 mL", "1,000 mL", "100 mL", "1,000,000 mL"], answer: 0},
+  {q: "Thinking Question: A 5-digit number has 9 in the ten-thousands place and its remaining digits decrease by 2 as you move right. What is the number?", options: ["97,531", "98,765", "96,301", "95,100"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML =
+      "🎉 Finished Set 2! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<p><b>Question ${current + 26}: ${q.q}</b></p>`;
+
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+
+    if (
+      idx === selectedIndex &&
+      selectedText !== correctTextForCurrentQuestion
+    ) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+
+  document.getElementById("score").innerText = "Score: " + score;
+
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1300);
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
