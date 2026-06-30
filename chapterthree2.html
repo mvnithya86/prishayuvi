@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Class 6 Math - Opposites & Contexts</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 450px;
+      margin: auto;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📉 Set 2: Real-World Directions & Opposites</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "What is the meaning of a 'Profit of (-₹3,500)'?", options: ["Loss of ₹3,500", "Gain of ₹3,500", "No change"], answer: 0},
+  {q: "What is the meaning of '-65 metres above sea level'?", options: ["Depth of 65 m", "Height of 65 m", "Level ground"], answer: 0},
+  {q: "What is the meaning of a 'Cash deposit of (-₹1,000)'?", options: ["Withdrawal of ₹1,000", "Deposit of ₹1,000", "Interest of ₹1,000"], answer: 0},
+  {q: "What is the meaning of a 'Weight increase of -10%'?", options: ["10% weight loss", "10% weight gain", "Steady weight"], answer: 0},
+  {q: "What is the meaning of '-10 minutes before time'?", options: ["Late by 10 minutes", "Early by 10 minutes", "On time"], answer: 0},
+  {q: "Write down the opposite statement for 'a rise in temperature by -10 °C' that means the same thing.", options: ["A fall in temperature by 10 °C", "A rise in temperature by 10 °C", "No change in temperature"], answer: 0},
+  {q: "What is the opposite statement of 'Walk 10 steps forward'?", options: ["Walk 10 steps backward", "Walk 10 steps forward", "Stay in place"], answer: 0},
+  {q: "What is the opposite statement of 'Move right by 1 metre'?", options: ["Move left by 1 metre", "Move right by 1 metre", "Move upward by 1 metre"], answer: 0},
+  {q: "What is the opposite statement of 'A balloon rose through the air by 5 metres'?", options: ["A balloon fell through the air by 5 metres", "A balloon moved right by 5 metres", "A balloon did not move"], answer: 0},
+  {q: "What is the opposite statement of 'The shopkeeper made a loss of ₹14'?", options: ["The shopkeeper made a profit of ₹14", "The shopkeeper made a loss of ₹14", "The shopkeeper broke even"], answer: 0},
+  {q: "What is the opposite statement of 'The shipwreck lies 30 metres below sea level'?", options: ["The shipwreck lies 30 metres above sea level", "The shipwreck lies 30 metres below sea level", "The shipwreck is at sea level"], answer: 0},
+  {q: "What is the opposite of the integer -7?", options: ["+7", "-7", "0"], answer: 0},
+  {q: "What is the opposite of the integer +14?", options: ["-14", "+14", "0"], answer: 0},
+  {q: "What is the opposite of the integer -236?", options: ["+236", "-236", "0"], answer: 0},
+  {q: "Which integer has an opposite with the greatest value out of: -29, +2900, -1000, +1450?", options: ["-1000", "+2900", "-29"], answer: 0},
+  {q: "Shruti deposited ₹8500, withdrew ₹4000, and deposited ₹3300. What is her final balance?", options: ["₹7,800", ["₹4,500"], "₹11,800"], answer: 0},
+  {q: "A pebble thrown 15m high falls into a pond 10m deep. By how much total distance did it fall?", options: ["+25 metres", "5 metres", "15 metres"], answer: 0},
+  {q: "An elevator went up 8 floors from the ground floor and then descended 7 floors. Which floor is it on?", options: ["1st floor", "15th floor", "Ground floor"], answer: 0},
+  {q: "A rocket went up 140m and fell 15m before exploding. How high was it when it burst?", options: ["125 m", "155 m", "140 m"], answer: 0},
+  {q: "Aman walked 21 steps forward and 26 steps backward. How many steps from start is he and where?", options: ["5 steps backward", "5 steps forward", "47 steps backward"], answer: 0},
+  {q: "If Janki's house is 170m to my left and Jagdish's house is 70m to my right, how far apart are they?", options: ["240 m", "100 m", "170 m"], answer: 0},
+  {q: "A car started from a garage, went 50m East, turned around and moved 20m West. Where is it now from the garage?", options: ["30 metres East", "30 metres West", "70 metres East"], answer: 0},
+  {q: "A robber drove 112 km East, then made a U-turn and drove 140 km West. Where is he from the start?", options: ["28 km West", "28 km East", "252 km West"], answer: 0},
+  {q: "Mr. Gupta had ₹2,500, deposited ₹1250, withdrew ₹750, deposited ₹500, and withdrew ₹300. Final balance?", options: ["₹3,200", "₹3,500", "₹2,500"], answer: 0},
+  {q: "In a 2x50m relay, Preeti ran 50m. Rashmi took the baton but ran back 10m towards the start line. How far must Rashmi run now to finish?", options: ["60 metres", "40 metres", "50 metres"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Finished! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+  let html = `<p><b>${q.q}</b></p>`;
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    let btnText = currentShuffledOptions[idx];
+    if (btnText === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+  document.getElementById("score").innerText = "Score: " + score;
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1200);
+}
+loadQuestion();
+</script>
+</body>
+</html>
