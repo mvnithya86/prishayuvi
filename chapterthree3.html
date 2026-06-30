@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Class 6 Math - Integer Properties & Arithmetic</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 450px;
+      margin: auto;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>➕ Set 3: Properties of Addition & Subtraction</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "The property stating the sum of two integers is always an integer is called:", options: ["Closure property", "Commutative property", "Associative property"], answer: 0},
+  {q: "If a and b are two integers, then a + b = b + a is known as:", options: ["Commutative property", "Closure property", "Associative property"], answer: 0},
+  {q: "Which element is known as the additive identity for integers?", options: ["0", "1", "-1"], answer: 0},
+  {q: "The sum of an integer and its additive inverse is always:", options: ["0", "1", "Twice the value"], answer: 0},
+  {q: "What is the additive inverse of -45?", options: ["+45", "-45", "0"], answer: 0},
+  {q: "Complete the box: (-429) + (+109) = (109) + [ ? ]", options: ["-429", "+429", "0"], answer: 0},
+  {q: "Complete the box: (+727) + [ ? ] = 0", options: ["-727", "+727", "0"], answer: 0},
+  {q: "Complete the box: (-6127) + [ ? ] = (-6127)", options: ["0", "+6127", "-6127"], answer: 0},
+  {q: "Is subtraction commutative for integers?", options: ["No, changing order changes the value", "Yes, always", "Only for positive integers"], answer: 0},
+  {q: "The difference between an integer and its additive inverse is equal to:", options: ["Twice the value of the integer", "Zero", "One"], answer: 0},
+  {q: "Add the integers: +28 and +12", options: ["40", "-40", "16"], answer: 0},
+  {q: "Add the integers: -36 and -14", options: ["-50", "50", "-22"], answer: 0},
+  {q: "Add the integers: -29 and +19", options: ["-10", "10", "-48"], answer: 0},
+  {q: "Add the integers: +124 and -32", options: ["92", "-92", "156"], answer: 0},
+  {q: "Subtract: -12 from +20", options: ["32", "8", "-32"], answer: 0},
+  {q: "Subtract: +16 from -22", options: ["-38", "6", "-6"], answer: 0},
+  {q: "Subtract: -38 from +12", options: ["50", "-26", "26"], answer: 0},
+  {q: "Subtract: +72 from -18", options: ["-90", "-54", "54"], answer: 0},
+  {q: "Fill in the blank: (-7) + (-3) = [ ? ]", options: ["-10", "10", "-4"], answer: 0},
+  {q: "Evaluate: 7 - (-4)", options: ["11", "3", "-11"], answer: 0},
+  {q: "Evaluate: (+61) + (-14)", options: ["47", "-47", "75"], answer: 0},
+  {q: "Evaluate: (-3) - (+3)", options: ["-6", "0", "6"], answer: 0},
+  {q: "Evaluate: +7 - (-7)", options: ["14", "0", "-14"], answer: 0},
+  {q: "True or False: The difference of two integers can never be an integer.", options: ["False", "True", "Sometimes True"], answer: 0},
+  {q: "True or False: The sum of a positive integer and a negative integer is always negative.", options: ["False", "True", "Only if positive is smaller"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Finished! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+  let html = `<p><b>${q.q}</b></p>`;
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    let btnText = currentShuffledOptions[idx];
+    if (btnText === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+  document.getElementById("score").innerText = "Score: " + score;
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1200);
+}
+loadQuestion();
+</script>
+</body>
+</html>
