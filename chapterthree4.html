@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Class 6 Math - Multiplication, Division & BODMAS</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #cfe8f7;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 450px;
+      margin: auto;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #fff4b3;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>✖️ Set 4: Multiplication, Division & BODMAS Rule</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "The product of two integers with the same sign is always:", options: ["Positive", "Negative", "Zero"], answer: 0},
+  {q: "The product of two integers with opposite signs is always:", options: ["Negative", "Positive", "One"], answer: 0},
+  {q: "Evaluate: (-8) × (-2)", options: ["16", "-16", "0"], answer: 0},
+  {q: "Evaluate: (+8) × (-2)", options: ["-16", "16", "-10"], answer: 0},
+  {q: "What is the product of any integer and 0?", options: ["0", "The integer itself", "1"], answer: 0},
+  {q: "What is the product of any integer and 1?", options: ["The integer itself", "0", "1"], answer: 0},
+  {q: "Complete the statement: (+218) × (-812) = (-812) × [ ? ]", options: ["+218", "-812", "0"], answer: 0},
+  {q: "The quotient of two negative integers is always:", options: ["Positive", "Negative", "Zero"], answer: 0},
+  {q: "Evaluate: (-25) ÷ (-5)", options: ["5", "-5", "1"], answer: 0},
+  {q: "Evaluate: (-35) ÷ (+5)", options: ["-7", "7", "0"], answer: 0},
+  {q: "When 0 is divided by any non-zero integer, the quotient is:", options: ["0", "1", "Undefined"], answer: 0},
+  {q: "In BODMAS, which type of bracket holds the highest priority?", options: ["Line/Bar bracket", "Parenthesis ()", "Square bracket []"], answer: 0},
+  {q: "Evaluate: 6 + 3 - 4", options: ["5", "1", "7"], answer: 0},
+  {q: "Evaluate: 3 × 4 ÷ 3", options: ["4", "12", "1"], answer: 0},
+  {q: "Evaluate: 20 ÷ 5 × 2", options: ["8", "2", "20"], answer: 0},
+  {q: "Multiply: (+3) with (+5)", options: ["15", "-15", "8"], answer: 0},
+  {q: "Multiply: (-7) with (-3)", options: ["21", "-21", "-10"], answer: 0},
+  {q: "Multiply: (+8) with (-5)", options: ["-40", "40", "3"], answer: 0},
+  {q: "Divide: (-24) by (-8)", options: ["3", "-3", "16"], answer: 0},
+  {q: "Divide: (+42) by (-7)", options: ["-6", "6", "-49"], answer: 0},
+  {q: "Divide: (-150) by (+10)", options: ["-15", "15", "-140"], answer: 0},
+  {q: "Evaluate: 12 + 3 × 5 - 5 × 6 + 2", options: ["-1", "29", "15"], answer: 0},
+  {q: "Simplify: 6 + 2 × [3 - {4 + 2 × (6 × 2 - 5)}]", options: ["-24", "12", "0"], answer: 0},
+  {q: "Divide: (-27) by (-3)", options: ["9", "-9", "24"], answer: 0},
+  {q: "Evaluate: (-3) × (-1)", options: ["3", "-3", "0"], answer: 0}
+];
+
+let current = 0;
+let score = 0;
+let currentShuffledOptions = [];
+let correctTextForCurrentQuestion = "";
+
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Finished! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+  let html = `<p><b>${q.q}</b></p>`;
+  currentShuffledOptions.forEach((opt, index) => {
+    html += `<button onclick="check(${index})">${opt}</button>`;
+  });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    let btnText = currentShuffledOptions[idx];
+    if (btnText === correctTextForCurrentQuestion) {
+      btn.style.background = "#a8e6a3";
+    }
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) {
+      btn.style.background = "#ffb3b3";
+    }
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) {
+    score++;
+    correctSound.play().catch(e => {});
+  } else {
+    wrongSound.play().catch(e => {});
+  }
+  document.getElementById("score").innerText = "Score: " + score;
+  setTimeout(() => {
+    current++;
+    loadQuestion();
+  }, 1200);
+}
+loadQuestion();
+</script>
+</body>
+</html>
