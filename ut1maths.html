@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematics Mastery Challenge - Grade 6</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #cfe8f7; text-align: center; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 550px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .clue-text { font-size: 18px; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .target-word { font-size: 20px; font-weight: bold; color: #2c3e50; background: #e8f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: none; background: #fff4b3; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #ffeaa7; }
+    #score { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    #result { font-size: 24px; font-weight: bold; color: #27ae60; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h2>📐 Mathematics Mastery Quiz (Case Studies & Operations)</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  // --- CASE STUDY 1: MOUNTAIN EXPEDITION (1-4) ---
+  {q: "A group starts at +400 m altitude and climbs to +850 m. How many meters did they climb?", options: ["450 m", "1250 m", "400 m"], answer: 0},
+  {q: "After reaching +850 m, they descend to +200 m. How many meters did they descend?", options: ["650 m", "1050 m", "200 m"], answer: 0},
+  {q: "Comparing their climb of 450 m and descent of 650 m, which movement was greater?", options: ["Descent", "Climb", "Both are equal"], answer: 0},
+  {q: "If they descend another 300 m from +200 m, what is their final altitude relative to sea level?", options: ["-100 m", "100 m", "-500 m"], answer: 0},
+
+  // --- CASE STUDY 2: BANK ACCOUNT BALANCE (5-7) ---
+  {q: "Rohan starts with ₹600 on Monday and spends ₹850 on Tuesday. What is his balance after Tuesday?", options: ["-₹250", "₹250", "-₹1450"], answer: 0},
+  {q: "His balance was -₹250. On Wednesday, he deposits ₹400. What is his balance now?", options: ["₹150", "-₹650", "₹650"], answer: 0},
+  {q: "Rohan has ₹150 and spends ₹200 on Thursday. What is his final balance?", options: ["-₹50", "₹50", "-₹350"], answer: 0},
+
+  // --- CASE STUDY 3: ELEVATOR MOVEMENT (8-11) ---
+  {q: "An elevator starts at floor 0, goes UP 10 floors, and DOWN 14 floors. Where is it now?", options: ["-4th floor", "4th floor", "-24th floor"], answer: 0},
+  {q: "The elevator is at -4th floor and goes UP 6 floors. Where is it now?", options: ["2nd floor", "-10th floor", "10th floor"], answer: 0},
+  {q: "From movements (Up 10, Down 14, Up 6), which single movement changed position the most?", options: ["Coming down 14 floors", "Going up 10 floors", "Going up 6 floors"], answer: 0},
+  {q: "The elevator is at 2nd floor and goes DOWN 5 floors. Where will it stop?", options: ["-3rd floor", "3rd floor", "-7th floor"], answer: 0},
+
+  // --- CASE STUDY 4: TOURNAMENT SCORING (12-14) ---
+  {q: "Team B earns +3 for a win, -1 for a loss, 0 for draw. They have 5 wins, 3 losses, 2 draws. Total points?", options: ["12 points", "15 points", "10 points"], answer: 0},
+  {q: "Team B has 12 points and then loses 3 consecutive matches (-1 each). What is their new score?", options: ["9 points", "15 points", "6 points"], answer: 0},
+  {q: "From 9 points, how many wins (+3 each) does Team B need to reach 18 points?", options: ["3 wins", "4 wins", "2 wins"], answer: 0},
+
+  // --- LARGE NUMBERS, ESTIMATION & OPERATIONS ---
+  {q: "A dairy farm produces 2,450 L, 3,280 L, and 1,975 L. Estimate total production to nearest thousand.", options: ["7,000 L", "8,000 L", "7,705 L"], answer: 0},
+  // Similar to Q15:
+  {q: "An orchard harvested 4,820 kg of apples, 3,190 kg of oranges, and 1,640 kg of pears. Estimate total harvest to nearest thousand.", options: ["10,000 kg", "9,000 kg", "9,650 kg"], answer: 0},
+  {q: "A water reservoir receives 12,480 L on Monday, 8,750 L on Tuesday, and 14,210 L on Wednesday. Estimate total water received to nearest thousand.", options: ["35,000 L", "30,000 L", "35,440 L"], answer: 0},
+  {q: "A store earns ₹18,920 on Friday, ₹24,450 on Saturday, and ₹21,800 on Sunday. Estimate total weekend earnings to nearest thousand.", options: ["65,000 ₹", "60,000 ₹", "65,170 ₹"], answer: 0},
+
+  {q: "What is the actual total milk production (2,450 L + 3,280 L + 1,975 L)?", options: ["7,705 L", "7,000 L", "8,105 L"], answer: 0},
+  {q: "Company A manufactured 67,845,210 laptops and Company B made 85,432,198. Which made more and by how much?", options: ["Company B by 17,586,988", "Company A by 17,586,988", "Company B by 18,586,988"], answer: 0},
+
+  {q: "Simplify: 35 + (8 × 5 - 9 × 4) ÷ (-2) - 4 of 3", options: ["21", "15", "25"], answer: 0},
+  // Similar to Q18:
+  {q: "Simplify: 42 - (6 × 7 - 8 × 3) ÷ (-3) + 5 of 2", options: ["58", "44", "50"], answer: 0},
+  {q: "Simplify: 28 + (9 × 4 - 5 × 8) ÷ (-4) - 3 of 4", options: ["17", "21", "15"], answer: 0},
+  {q: "Simplify: 50 - (7 × 6 - 4 × 8) ÷ (-5) + 2 of 6", options: ["60", "54", "48"], answer: 0},
+
+  {q: "A warehouse has 1,25,000 boxes. 45,675 are shipped out and 32,890 arrive. How many are now in the warehouse?", options: ["1,12,215 boxes", "1,11,215 boxes", "1,25,000 boxes"], answer: 0},
+  {q: "Insert the correct operation sign: -18 ____ 12 = -30", options: ["-", "+", "×"], answer: 0}
+];
+
+let current = 0, score = 0, currentShuffledOptions = [], correctTextForCurrentQuestion = "";
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Quiz Completed! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<div class="clue-text">Question ${current + 1} of ${questions.length}:</div><div class="target-word">${q.q}</div>`;
+  currentShuffledOptions.forEach((opt, index) => { html += `<button onclick="check(${index})">${opt}</button>`; });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) btn.style.background = "#a8e6a3";
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) btn.style.background = "#ffb3b3";
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) { score++; correctSound.play().catch(e => {}); }
+  else { wrongSound.play().catch(e => {}); }
+
+  document.getElementById("score").innerText = "Score: " + score + " / " + questions.length;
+  setTimeout(() => { current++; loadQuestion(); }, 1500);
+}
+loadQuestion();
+</script>
+</body>
+</html>
