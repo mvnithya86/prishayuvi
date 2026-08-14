@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set 3: Triangles, Polygons & Circles</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #e8f8f5; text-align: center; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 550px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .clue-text { font-size: 18px; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .target-word { font-size: 20px; font-weight: bold; color: #2c3e50; background: #d1f2eb; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: none; background: #fff4b3; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #ffeaa7; }
+    #score { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    #result { font-size: 24px; font-weight: bold; color: #27ae60; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h2>🔷 Set 3: Triangles, Quadrilaterals & Circles</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "What is the sum of all interior angles of a triangle?", options: ["180°", "360°", "90°"], answer: 0},
+  {q: "What is the sum of all interior angles of a quadrilateral?", options: ["360°", "180°", "540°"], answer: 0},
+  {q: "A triangle having all three sides equal in length is called:", options: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle"], answer: 0},
+  {q: "A triangle having two sides equal in length is called:", options: ["Isosceles triangle", "Equilateral triangle", "Scalene triangle"], answer: 0},
+  {q: "A triangle having all three sides of different lengths is called:", options: ["Scalene triangle", "Isosceles triangle", "Equilateral triangle"], answer: 0},
+  {q: "Two interior angles of a triangle are 50° and 70°. Find the third angle.", options: ["60°", "80°", "50°"], answer: 0},
+  {q: "An exterior angle of a triangle equals the sum of its two:", options: ["Opposite interior angles", "Adjacent interior angles", "Exterior angles"], answer: 0},
+  {q: "What is a 5-sided polygon called?", options: ["Pentagon", "Hexagon", "Heptagon"], answer: 0},
+  {q: "What is a 6-sided polygon called?", options: ["Hexagon", "Pentagon", "Octagon"], answer: 0},
+  {q: "What is an 8-sided polygon called?", options: ["Octagon", "Heptagon", "Nonagon"], answer: 0},
+  {q: "A polygon with all sides equal and all angles equal is called a:", options: ["Regular Polygon", "Irregular Polygon", "Complex Polygon"], answer: 0},
+  {q: "A quadrilateral with all 4 sides equal and 4 right angles is a:", options: ["Square", "Rectangle", "Rhombus"], answer: 0},
+  {q: "A quadrilateral with opposite sides equal and 4 right angles is a:", options: ["Rectangle", "Parallelogram", "Trapezium"], answer: 0},
+  {q: "A quadrilateral with only ONE pair of parallel sides is a:", options: ["Trapezium", "Parallelogram", "Rhombus"], answer: 0},
+  {q: "Distance from the centre of a circle to any point on its boundary is the:", options: ["Radius", "Diameter", "Chord"], answer: 0},
+  {q: "A straight line segment joining two points on a circle's boundary is a:", options: ["Chord", "Radius", "Arc"], answer: 0},
+  {q: "The longest chord passing through the centre of a circle is the:", options: ["Diameter", "Radius", "Secant"], answer: 0},
+  {q: "If the radius of a circle is 8 cm, what is its diameter?", options: ["16 cm", "4 cm", "24 cm"], answer: 0},
+  {q: "If the diameter of a circle is 20 cm, what is its radius?", options: ["10 cm", "40 cm", "5 cm"], answer: 0},
+  {q: "The region enclosed by two radii and an arc of a circle is a:", options: ["Sector", "Segment", "Chord"], answer: 0},
+  {q: "The region enclosed by a chord and an arc of a circle is a:", options: ["Segment", "Sector", "Radius"], answer: 0},
+  {q: "How many diagonals does a triangle have?", options: ["0", "1", "3"], answer: 0},
+  {q: "How many diagonals does a quadrilateral have?", options: ["2", "4", "1"], answer: 0},
+  {q: "Can a triangle have sides of length 2 cm, 3 cm, and 6 cm?", options: ["No, 2+3 is not greater than 6", "Yes, always", "Only if it is right-angled"], answer: 0},
+  {q: "Three angles of a quadrilateral are 90°, 85°, and 95°. Find the 4th angle.", options: ["90°", "100°", "80°"], answer: 0}
+];
+
+let current = 0, score = 0, currentShuffledOptions = [], correctTextForCurrentQuestion = "";
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Quiz Completed! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<div class="clue-text">Question ${current + 1} of ${questions.length}:</div><div class="target-word">${q.q}</div>`;
+  currentShuffledOptions.forEach((opt, index) => { html += `<button onclick="check(${index})">${opt}</button>`; });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) btn.style.background = "#a8e6a3";
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) btn.style.background = "#ffb3b3";
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) { score++; correctSound.play().catch(e => {}); }
+  else { wrongSound.play().catch(e => {}); }
+
+  document.getElementById("score").innerText = "Score: " + score + " / " + questions.length;
+  setTimeout(() => { current++; loadQuestion(); }, 1500);
+}
+loadQuestion();
+</script>
+</body>
+</html>
