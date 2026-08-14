@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set 2: Angle Pairs & Clock Angles</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #fce4ec; text-align: center; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 550px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .clue-text { font-size: 18px; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .target-word { font-size: 20px; font-weight: bold; color: #2c3e50; background: #f8bbd0; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: none; background: #fff4b3; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #ffeaa7; }
+    #score { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    #result { font-size: 24px; font-weight: bold; color: #27ae60; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h2>⏰ Set 2: Angle Pairs & Clock Calculations</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "What is the sum of two complementary angles?", options: ["90°", "180°", "360°"], answer: 0},
+  {q: "What is the sum of two supplementary angles?", options: ["180°", "90°", "270°"], answer: 0},
+  {q: "Find the complement of 35°.", options: ["55°", "145°", "65°"], answer: 0},
+  {q: "Find the complement of 62°.", options: ["28°", "118°", "38°"], answer: 0},
+  {q: "Find the supplement of 110°.", options: ["70°", "20°", "80°"], answer: 0},
+  {q: "Find the supplement of 135°.", options: ["45°", "55°", "145°"], answer: 0},
+  {q: "An angle equal to its own complement is:", options: ["45°", "90°", "60°"], answer: 0},
+  {q: "An angle equal to its own supplement is:", options: ["90°", "180°", "45°"], answer: 0},
+  {q: "Two adjacent angles whose non-common arms form a straight line are a:", options: ["Linear Pair", "Vertically Opposite Pair", "Complementary Pair"], answer: 0},
+  {q: "If one angle of a linear pair is 75°, what is the other angle?", options: ["105°", "15°", "115°"], answer: 0},
+  {q: "When two straight lines intersect, vertically opposite angles are always:", options: ["Equal", "Supplementary", "Complementary"], answer: 0},
+  {q: "If two vertically opposite angles are x and 65°, what is x?", options: ["65°", "115°", "25°"], answer: 0},
+  {q: "What is the sum of all interior angles around a single point?", options: ["360°", "180°", "90°"], answer: 0},
+  {q: "How many degrees does the minute hand of a clock rotate in 1 hour?", options: ["360°", "180°", "90°"], answer: 0},
+  {q: "How many degrees does the minute hand turn in 5 minutes?", options: ["30°", "60°", "15°"], answer: 0},
+  {q: "How many degrees does the minute hand turn in 15 minutes?", options: ["90°", "45°", "180°"], answer: 0},
+  {q: "How many degrees does the minute hand turn in 30 minutes?", options: ["180°", "90°", "360°"], answer: 0},
+  {q: "How many degrees does the minute hand turn in 45 minutes?", options: ["270°", "180°", "300°"], answer: 0},
+  {q: "What angle is formed between clock hands at 3:00?", options: ["90°", "180°", "60°"], answer: 0},
+  {q: "What angle is formed between clock hands at 6:00?", options: ["180°", "90°", "360°"], answer: 0},
+  {q: "What angle is formed between clock hands at 1:00?", options: ["30°", "60°", "15°"], answer: 0},
+  {q: "What angle is formed between clock hands at 4:00?", options: ["120°", "90°", "150°"], answer: 0},
+  {q: "An angle measuring 220° is best classified as a:", options: ["Reflex angle", "Obtuse angle", "Acute angle"], answer: 0},
+  {q: "If two adjacent angles on a line are 2x and 3x (total 180°), find x.", options: ["36°", "30°", "45°"], answer: 0},
+  {q: "If an angle is 20° more than its complement, what is the angle?", options: ["55°", "35°", "45°"], answer: 0}
+];
+
+let current = 0, score = 0, currentShuffledOptions = [], correctTextForCurrentQuestion = "";
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Quiz Completed! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<div class="clue-text">Question ${current + 1} of ${questions.length}:</div><div class="target-word">${q.q}</div>`;
+  currentShuffledOptions.forEach((opt, index) => { html += `<button onclick="check(${index})">${opt}</button>`; });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) btn.style.background = "#a8e6a3";
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) btn.style.background = "#ffb3b3";
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) { score++; correctSound.play().catch(e => {}); }
+  else { wrongSound.play().catch(e => {}); }
+
+  document.getElementById("score").innerText = "Score: " + score + " / " + questions.length;
+  setTimeout(() => { current++; loadQuestion(); }, 1500);
+}
+loadQuestion();
+</script>
+</body>
+</html>
