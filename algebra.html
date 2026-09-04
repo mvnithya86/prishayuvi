@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algebra Tiles Interactive Quiz - 20 Questions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+
+    :root {
+      --unit-size: 26px;     /* 1-unit square */
+      --x-size: 80px;        /* x length (height of x, side of x^2) */
+    }
+
+    /* SVG Tile Custom Styling */
+    .tile {
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, opacity 0.25s ease, filter 0.15s ease;
+    }
+
+    .tile:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .tile.selected rect {
+      stroke: #f59e0b !important;
+      stroke-width: 3.5px !important;
+      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9));
+    }
+
+    .tile.zero-pair {
+      opacity: 0.12;
+      pointer-events: none;
+      filter: grayscale(100%);
+    }
+
+    /* Dimensions using exact geometric algebra tile proportions */
+    .tile-x2 { width: var(--x-size); height: var(--x-size); }
+    .tile-x  { width: var(--unit-size); height: var(--x-size); }
+    .tile-c  { width: var(--unit-size); height: var(--unit-size); }
+
+    /* Custom Scrollbar for Workspace */
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-3 sm:p-6">
+
+  <!-- Top Navigation & Title Bar -->
+  <header class="w-full max-w-4xl bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap justify-between items-center gap-3">
+    <div class="flex items-center gap-3">
+      <div class="bg-blue-600 text-white font-bold text-lg w-10 h-10 rounded-xl flex items-center justify-center shadow-md shadow-blue-200">
+        <span id="current-q-num">1</span>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-slate-800 leading-tight">Algebra Tiles Workshop</h1>
+        <p class="text-xs text-slate-500 font-medium">Exercise 13.1 & Revision Exercise</p>
+      </div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-semibold text-slate-500">Progress:</span>
+      <div class="w-32 sm:w-48 bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+        <div id="progress-bar" class="bg-blue-600 h-full rounded-full transition-all duration-300" style="width: 5%;"></div>
+      </div>
+      <span id="progress-text" class="text-xs font-bold text-blue-600">1/20</span>
+    </div>
+  </header>
+
+  <!-- Main Interactive Card -->
+  <main class="w-full max-w-4xl bg-white rounded-2xl shadow-lg border border-slate-200 p-5 sm:p-8 flex-1 flex flex-col justify-between">
+
+    <div>
+      <!-- Question Header -->
+      <div class="mb-4">
+        <div class="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-2" id="question-category">
+          Polynomial Addition
+        </div>
+        <h2 id="question-text" class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+          Simplify: (2x² + 2x + 5) + (-x² - 3x + 1)
+        </h2>
+      </div>
+
+      <!-- Tile Interaction Instruction -->
+      <div class="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl mb-5 text-amber-900 text-xs sm:text-sm font-medium">
+        <svg class="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span><strong>Interactive Board:</strong> Click a positive <span class="text-blue-600 font-bold">(blue)</span> tile and a negative <span class="text-red-600 font-bold">(red)</span> tile of the same shape to eliminate a <strong>Zero Pair</strong>.</span>
+      </div>
+
+      <!-- Interactive Workspace Container -->
+      <div id="workspace" class="workspace min-h-[260px] bg-slate-50 border-2 border-dashed border-slate-300 rounded-2xl p-4 sm:p-6 flex flex-wrap sm:flex-nowrap justify-around items-start gap-4 custom-scroll overflow-x-auto">
+        <!-- Tile Columns are rendered via JavaScript -->
+      </div>
+    </div>
+
+    <!-- Feedback Message & Bottom Action Bar -->
+    <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+      
+      <!-- Reset Button & Feedback Display -->
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <button onclick="resetBoard()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Reset Tiles
+        </button>
+        <div id="feedback" class="text-sm sm:text-base font-bold min-h-[24px]"></div>
+      </div>
+
+      <!-- Main Navigation Buttons -->
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed">
+          Previous
+        </button>
+
+        <button id="check-btn" onclick="checkAnswer()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition shadow-md shadow-blue-200">
+          Check Answer
+        </button>
+
+        <button id="next-btn" onclick="nextQuestion()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition shadow-md shadow-emerald-200 flex items-center gap-1">
+          <span>Next</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Page Footer -->
+  <footer class="w-full max-w-4xl text-center mt-4 text-xs text-slate-400 font-medium">
+    Class 6 Mathematics • Exercise 13.1 & Revision Exercise • 20 Question Interactive Module
+  </footer>
+
+  <script>
+    // 20 Questions constructed directly from Exercise 13.1 & Revision Exercise
+    const questions = [
+      {
+        id: 1,
+        category: "Exercise 13.1 - Q1(i)",
+        text: "Add the polynomials: (2x + y) + (x + 3y)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 3, x_neg: 0, c_pos: 4, c_neg: 0 },
+        expected: { x2: 0, x: 3, c: 4 },
+        answerExpr: "3x + 4y"
+      },
+      {
+        id: 2,
+        category: "Exercise 13.1 - Q1(iii)",
+        text: "Simplify: (2x² + 2x + 5) + (-x² - 3x + 1)",
+        tiles: { x2_pos: 2, x2_neg: 1, x_pos: 2, x_neg: 3, c_pos: 6, c_neg: 0 },
+        expected: { x2: 1, x: -1, c: 6 },
+        answerExpr: "x² - x + 6"
+      },
+      {
+        id: 3,
+        category: "Exercise 13.1 - Q2(i)",
+        text: "Subtract: (x + y) from (5x + 3y)  ➔  (5x + 3y) - (x + y)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 5, x_neg: 1, c_pos: 3, c_neg: 1 },
+        expected: { x2: 0, x: 4, c: 2 },
+        answerExpr: "4x + 2y"
+      },
+      {
+        id: 4,
+        category: "Exercise 13.1 - Q2(ii)",
+        text: "Subtract: (2x² + 3x) from (9x² + 5x)  ➔  (9x² + 5x) - (2x² + 3x)",
+        tiles: { x2_pos: 9, x2_neg: 2, x_pos: 5, x_neg: 3, c_pos: 0, c_neg: 0 },
+        expected: { x2: 7, x: 2, c: 0 },
+        answerExpr: "7x² + 2x"
+      },
+      {
+        id: 5,
+        category: "Exercise 13.1 - Q6(i)",
+        text: "Simplify using tiles: x - (y + z)  ➔  Represented as: x - 1 - 1",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 1, x_neg: 0, c_pos: 0, c_neg: 2 },
+        expected: { x2: 0, x: 1, c: -2 },
+        answerExpr: "x - y - z"
+      },
+      {
+        id: 6,
+        category: "Exercise 13.1 - Q6(ii)",
+        text: "Simplify: 3x + (4x - 2x - 3)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 7, x_neg: 2, c_pos: 0, c_neg: 3 },
+        expected: { x2: 0, x: 5, c: -3 },
+        answerExpr: "5x - 3"
+      },
+      {
+        id: 7,
+        category: "Exercise 13.1 - Q6(iii)",
+        text: "Simplify: 5x - (x + 3x + 4)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 5, x_neg: 4, c_pos: 0, c_neg: 4 },
+        expected: { x2: 0, x: 1, c: -4 },
+        answerExpr: "x - 4"
+      },
+      {
+        id: 8,
+        category: "Exercise 13.1 - Q6(vii)",
+        text: "Simplify: 4x² - (x² + 3x - 2)",
+        tiles: { x2_pos: 4, x2_neg: 1, x_pos: 0, x_neg: 3, c_pos: 2, c_neg: 0 },
+        expected: { x2: 3, x: -3, c: 2 },
+        answerExpr: "3x² - 3x + 2"
+      },
+      {
+        id: 9,
+        category: "Exercise 13.1 - Q6(viii)",
+        text: "Simplify: 5a + 12 - (6a + 16) - (4a - 4) + 5a",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 10, x_neg: 10, c_pos: 16, c_neg: 16 },
+        expected: { x2: 0, x: 0, c: 0 },
+        answerExpr: "0"
+      },
+      {
+        id: 10,
+        category: "Exercise 13.1 - Q6(ix)",
+        text: "Simplify: 5x - (6x + 1) + (2x + 3)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 7, x_neg: 6, c_pos: 3, c_neg: 1 },
+        expected: { x2: 0, x: 1, c: 2 },
+        answerExpr: "x + 2"
+      },
+      {
+        id: 11,
+        category: "Exercise 13.1 - Q3",
+        text: "What algebraic expression will you get when (3x² + 4x + 6) is increased by (2x² - 3x + 2)?",
+        tiles: { x2_pos: 5, x2_neg: 0, x_pos: 4, x_neg: 3, c_pos: 8, c_neg: 0 },
+        expected: { x2: 5, x: 1, c: 8 },
+        answerExpr: "5x² + x + 8"
+      },
+      {
+        id: 12,
+        category: "Revision Ex - Q1(i)",
+        text: "Simplify: 7x + x",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 8, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 0, x: 8, c: 0 },
+        answerExpr: "8x"
+      },
+      {
+        id: 13,
+        category: "Revision Ex - Q1(iii)",
+        text: "Simplify: 5x² + 3x² + x²",
+        tiles: { x2_pos: 9, x2_neg: 0, x_pos: 0, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 9, x: 0, c: 0 },
+        answerExpr: "9x²"
+      },
+      {
+        id: 14,
+        category: "Revision Ex - Q1(vi)",
+        text: "Simplify: 5y² - 6y²",
+        tiles: { x2_pos: 5, x2_neg: 6, x_pos: 0, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: -1, x: 0, c: 0 },
+        answerExpr: "-y²"
+      },
+      {
+        id: 15,
+        category: "Revision Ex - Q2(i)",
+        text: "Add the monomials: x and x",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 2, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 0, x: 2, c: 0 },
+        answerExpr: "2x"
+      },
+      {
+        id: 16,
+        category: "Revision Ex - Q2(ii)",
+        text: "Add the monomials: 2x and 3x",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 5, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 0, x: 5, c: 0 },
+        answerExpr: "5x"
+      },
+      {
+        id: 17,
+        category: "Revision Ex - Q3(ii)",
+        text: "Subtract: 3x from 5x  ➔  5x - 3x",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 5, x_neg: 3, c_pos: 0, c_neg: 0 },
+        expected: { x2: 0, x: 2, c: 0 },
+        answerExpr: "2x"
+      },
+      {
+        id: 18,
+        category: "Revision Ex - Q3(v)",
+        text: "Subtract: -6x from 6x  ➔  6x - (-6x) = 6x + 6x",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 12, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 0, x: 12, c: 0 },
+        answerExpr: "12x"
+      },
+      {
+        id: 19,
+        category: "Revision Ex - Q5(i)",
+        text: "Simplify: 6x + 6 - (3x - 6 - x + 9)",
+        tiles: { x2_pos: 0, x2_neg: 0, x_pos: 6, x_neg: 2, c_pos: 12, c_neg: 9 },
+        expected: { x2: 0, x: 4, c: 3 },
+        answerExpr: "4x + 3"
+      },
+      {
+        id: 20,
+        category: "Revision Ex - Q5(iii)",
+        text: "Simplify nested expression: 8x² - [2x² + {3x² - (x² + x²)}]",
+        tiles: { x2_pos: 8, x2_neg: 3, x_pos: 0, x_neg: 0, c_pos: 0, c_neg: 0 },
+        expected: { x2: 5, x: 0, c: 0 },
+        answerExpr: "5x²"
+      }
+    ];
+
+    let currentIdx = 0;
+    let selectedTile = null;
+
+    // Render the initial question when page loads
+    window.onload = function() {
+      renderQuestion();
+    };
+
+    function renderQuestion() {
+      const q = questions[currentIdx];
+      selectedTile = null;
+
+      // Update UI texts
+      document.getElementById('current-q-num').textContent = currentIdx + 1;
+      document.getElementById('question-category').textContent = q.category;
+      document.getElementById('question-text').textContent = q.text;
+      document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+      document.getElementById('progress-text').textContent = `${currentIdx + 1}/${questions.length}`;
+
+      // Reset Feedback Area
+      const feedback = document.getElementById('feedback');
+      feedback.textContent = '';
+      feedback.className = 'text-sm sm:text-base font-bold min-h-[24px]';
+
+      // Navigation Buttons State
+      document.getElementById('prev-btn').disabled = currentIdx === 0;
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (currentIdx === questions.length - 1) {
+        nextBtn.innerHTML = `<span>Finish</span>`;
+      } else {
+        nextBtn.innerHTML = `<span>Next</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+      }
+
+      const workspace = document.getElementById('workspace');
+      workspace.innerHTML = '';
+
+      // Build x² Column if relevant
+      if (q.tiles.x2_pos > 0 || q.tiles.x2_neg > 0) {
+        workspace.appendChild(createColumn('x² Terms', 'x2', q.tiles.x2_pos, q.tiles.x2_neg));
+      }
+
+      // Build x Column if relevant
+      if (q.tiles.x_pos > 0 || q.tiles.x_neg > 0) {
+        workspace.appendChild(createColumn('x Terms', 'x', q.tiles.x_pos, q.tiles.x_neg));
+      }
+
+      // Build Constants/Units Column if relevant
+      if (q.tiles.c_pos > 0 || q.tiles.c_neg > 0) {
+        workspace.appendChild(createColumn('Unit Constants', 'c', q.tiles.c_pos, q.tiles.c_neg));
+      }
+
+      attachTileListeners();
+    }
+
+    function createColumn(title, type, posCount, negCount) {
+      const col = document.createElement('div');
+      col.className = 'flex flex-col items-center flex-1 min-w-[130px]';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'text-xs font-bold text-slate-500 uppercase tracking-wider mb-3';
+      titleEl.textContent = title;
+      col.appendChild(titleEl);
+
+      const container = document.createElement('div');
+      container.className = 'flex flex-wrap gap-2 justify-center items-center';
+
+      // Positives (Blue)
+      for (let i = 0; i < posCount; i++) {
+        container.innerHTML += getTileSVG(type, 1);
+      }
+      // Negatives (Red)
+      for (let i = 0; i < negCount; i++) {
+        container.innerHTML += getTileSVG(type, -1);
+      }
+
+      col.appendChild(container);
+      return col;
+    }
+
+    function getTileSVG(type, val) {
+      const isPos = val === 1;
+      const fill = isPos ? '#3182ce' : '#e53e3e';
+      const stroke = isPos ? '#1a365d' : '#742a2a';
+      const sign = isPos ? '+' : '-';
+
+      if (type === 'x2') {
+        const label = isPos ? '+x²' : '-x²';
+        return `
+          <svg class="tile tile-x2" data-type="x2" data-val="${val}" viewBox="0 0 80 80">
+            <rect width="80" height="80" rx="6" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
+            <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-size="18" font-weight="bold">${label}</text>
+          </svg>`;
+      } else if (type === 'x') {
+        const label = isPos ? '+x' : '-x';
+        return `
+          <svg class="tile tile-x" data-type="x" data-val="${val}" viewBox="0 0 26 80">
+            <rect width="26" height="80" rx="4" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
+            <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-size="13" font-weight="bold">${label}</text>
+          </svg>`;
+      } else {
+        return `
+          <svg class="tile tile-c" data-type="c" data-val="${val}" viewBox="0 0 26 26">
+            <rect width="26" height="26" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
+            <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-size="14" font-weight="bold">${sign}</text>
+          </svg>`;
+      }
+    }
+
+    function attachTileListeners() {
+      document.querySelectorAll('.tile').forEach(tile => {
+        tile.addEventListener('click', function() {
+          if (this.classList.contains('zero-pair')) return;
+
+          if (!selectedTile) {
+            selectedTile = this;
+            this.classList.add('selected');
+          } else if (selectedTile === this) {
+            selectedTile.classList.remove('selected');
+            selectedTile = null;
+          } else {
+            const type1 = selectedTile.getAttribute('data-type');
+            const type2 = this.getAttribute('data-type');
+            const val1 = parseInt(selectedTile.getAttribute('data-val'));
+            const val2 = parseInt(this.getAttribute('data-val'));
+
+            // Match zero-pairs (same tile dimension, opposite signs)
+            if (type1 === type2 && val1 + val2 === 0) {
+              selectedTile.classList.add('zero-pair');
+              this.classList.add('zero-pair');
+              selectedTile.classList.remove('selected');
+              selectedTile = null;
+            } else {
+              selectedTile.classList.remove('selected');
+              selectedTile = this;
+              this.classList.add('selected');
+            }
+          }
+        });
+      });
+    }
+
+    function checkAnswer() {
+      const activeTiles = Array.from(document.querySelectorAll('.tile:not(.zero-pair)'));
+      let x2 = 0, x = 0, c = 0;
+
+      activeTiles.forEach(t => {
+        const type = t.getAttribute('data-type');
+        const val = parseInt(t.getAttribute('data-val'));
+        if (type === 'x2') x2 += val;
+        if (type === 'x') x += val;
+        if (type === 'c') c += val;
+      });
+
+      const expected = questions[currentIdx].expected;
+      const feedback = document.getElementById('feedback');
+
+      if (x2 === expected.x2 && x === expected.x && c === expected.c) {
+        feedback.textContent = `✨ Excellent! Simplified Result: ${questions[currentIdx].answerExpr}`;
+        feedback.className = "text-sm sm:text-base font-bold text-emerald-600";
+      } else {
+        feedback.textContent = "Keep pairing! Remove all remaining opposite blue and red tiles.";
+        feedback.className = "text-sm sm:text-base font-bold text-rose-600";
+      }
+    }
+
+    function resetBoard() {
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        renderQuestion();
+      } else {
+        alert("🎉 Congratulations! You have completed all 20 questions in the interactive workshop!");
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderQuestion();
+      }
+    }
+  </script>
+</body>
+</html>
