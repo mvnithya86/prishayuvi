@@ -1,153 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Decimals MCQ Quiz (Exercises 6.2 &amp; 6.3)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decimals Quiz (Exercises 6.2 &amp; 6.3)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
-      margin: 0;
-      padding: 24px;
-      background: #f5f7fb;
-      color: #1f2937;
-    }
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 28px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 1.6rem;
-    }
-    .question-card {
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 18px;
-      margin-bottom: 18px;
-      background: #fafafa;
-    }
-    .question-text {
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .option {
-      display: block;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-    .feedback {
-      margin-top: 10px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      display: none;
-    }
-    .correct {
-      color: #15803d;
-    }
-    .incorrect {
-      color: #b91c1c;
-    }
-    button {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      padding: 12px 22px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #1d4ed8;
-    }
-    #score-box {
-      margin-top: 20px;
-      font-size: 1.15rem;
-      font-weight: bold;
-    }
+    body { font-family: Arial, sans-serif; background-color: #cfe8f7; text-align: center; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 550px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .clue-text { font-size: 18px; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .target-word { font-size: 20px; font-weight: bold; color: #2c3e50; background: #e8f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: none; background: #fff4b3; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #ffeaa7; }
+    #score { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    #result { font-size: 24px; font-weight: bold; color: #27ae60; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Decimals Quiz — 30 MCQs (Exercises 6.2 &amp; 6.3)</h1>
-    <form id="quiz-form"></form>
-    <button type="button" onclick="gradeQuiz()">Submit Quiz</button>
-    <div id="score-box"></div>
-  </div>
 
-  <script>
-    const quizData = [
-      { q: "1. What is the sum of 7.16 + 3.14 from Exercise 6.2?", options: ["10.20", "10.3", "10.32", "9.3"], answer: 1 },
-      { q: "2. Evaluate 2.165 + 3.278 from Exercise 6.2.", options: ["5.343", "5.443", "5.433", "6.443"], answer: 1 },
-      { q: "3. Find the value of 14.354 + 9.109 from Exercise 6.2.", options: ["23.453", "23.463", "22.463", "24.463"], answer: 1 },
-      { q: "4. What is 21.7 - 4.69 from Exercise 6.2?", options: ["17.11", "17.01", "16.01", "17.99"], answer: 1 },
-      { q: "5. Subtract: 3 - 1.013 from Exercise 6.2.", options: ["2.987", "1.987", "1.087", "2.013"], answer: 1 },
-      { q: "6. Evaluate 11.111 - 1.111 from Exercise 6.2.", options: ["10", "10.222", "11", "9.999"], answer: 0 },
-      { q: "7. Simplify 3.4 + 5 - 6.4 from Exercise 6.2.", options: ["2", "14.8", "3", "1.4"], answer: 0 },
-      { q: "8. Simplify 3.28 + 1.63 - 4.9 from Exercise 6.2.", options: ["0.1", "0.01", "0", "9.81"], answer: 1 },
-      { q: "9. What should be added to 3.189 to get 7? (Exercise 6.2, Q4)", options: ["3.811", "4.811", "3.911", "10.189"], answer: 0 },
-      { q: "10. What should be added to the difference of 3.14 and 1.674 to get 9? (Exercise 6.2, Q5)", options: ["7.534", "7.466", "10.466", "6.534"], answer: 0 },
-      { q: "11. By how much is the sum of 14.28 and 11.219 greater than their difference? (Exercise 6.2, Q6)", options: ["22.438", "25.499", "28.56", "3.061"], answer: 0 },
-      { q: "12. Find the product 6.345 × 10 from Exercise 6.3.", options: ["63.45", "634.5", "0.6345", "6.3450"], answer: 0 },
-      { q: "13. Find the product 36.791 × 100 from Exercise 6.3.", options: ["367.91", "3679.1", "36791", "0.36791"], answer: 1 },
-      { q: "14. Find the product 0.2416 × 1000 from Exercise 6.3.", options: ["24.16", "241.6", "2416", "2.416"], answer: 1 },
-      { q: "15. Find the product 2.31 × 50 from Exercise 6.3.", options: ["11.55", "115.5", "1155", "105.5"], answer: 1 },
-      { q: "16. Evaluate 1.2 × 2.1 from Exercise 6.3.", options: ["25.2", "2.52", "0.252", "3.3"], answer: 1 },
-      { q: "17. Evaluate 7.18 × 3.75 from Exercise 6.3.", options: ["26.925", "269.25", "2.6925", "25.925"], answer: 0 },
-      { q: "18. What is the quotient 364.19 ÷ 10 from Exercise 6.3?", options: ["3641.9", "36.419", "3.6419", "0.36419"], answer: 1 },
-      { q: "19. Find the quotient 479.23 ÷ 100 from Exercise 6.3.", options: ["47.923", "4.7923", "0.47923", "47923"], answer: 1 },
-      { q: "20. Find the quotient 1.673 ÷ 1000 from Exercise 6.3.", options: ["0.01673", "0.001673", "0.0001673", "1673"], answer: 1 },
-      { q: "21. Evaluate 108.5 ÷ 50 from Exercise 6.3.", options: ["21.7", "2.17", "0.217", "2.71"], answer: 1 },
-      { q: "22. Find the value of 8 ÷ 1.6 from Exercise 6.3.", options: ["0.5", "5", "50", "1.28"], answer: 1 },
-      { q: "23. Find the value of 11.13 ÷ 2.1 from Exercise 6.3.", options: ["5.3", "0.53", "53", "5.03"], answer: 0 },
-      { q: "24. Simplify 3.1 × 4 - 6.2 × 2 from Exercise 6.3.", options: ["0", "24.8", "6.2", "12.4"], answer: 0 },
-      { q: "25. Convert 6 cm into meters (m) as in Exercise 6.3, Q6(v).", options: ["0.6 m", "0.06 m", "600 m", "0.006 m"], answer: 1 },
-      { q: "26. Convert 37 dag into kilograms (kg) as in Exercise 6.3, Q6(vi).", options: ["3.7 kg", "0.37 kg", "0.037 kg", "3700 kg"], answer: 1 },
-      { q: "27. Convert 1.23 kg into grams (g) as in Exercise 6.3, Q6(viii).", options: ["123 g", "1230 g", "12300 g", "0.00123 g"], answer: 1 },
-      { q: "28. In a 100 m race, Virender covered 68.8 m. How much distance remains? (Exercise 6.3, Q7)", options: ["31.2 m", "32.2 m", "41.2 m", "168.8 m"], answer: 0 },
-      { q: "29. How much would a dozen apples cost if each apple is ₹8.35? (Exercise 6.3, Q8)", options: ["₹83.50", "₹100.20", "₹10.02", "₹91.85"], answer: 1 },
-      { q: "30. From ₹500, Khushi bought 4 ice creams at ₹13.50 each and 2 pastries at ₹56.25 each. Money left? (Exercise 6.3, Q10)", options: ["₹166.50", "₹333.50", "₹343.50", "₹389.75"], answer: 1 }
-    ];
+<h2>🔢 Chapter 6: Decimals (Exercises 6.2 &amp; 6.3)</h2>
+<div id="score">Score: 0</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
 
-    const form = document.getElementById("quiz-form");
-    quizData.forEach((item, idx) => {
-      const card = document.createElement("div");
-      card.className = "question-card";
-      card.innerHTML = `
-        <div class="question-text">${item.q}</div>
-        ${item.options.map((opt, oIdx) => `
-          <label class="option">
-            <input type="radio" name="q${idx}" value="${oIdx}" />
-            ${opt}
-          </label>
-        `).join("")}
-        <div class="feedback" id="fb-${idx}"></div>
-      `;
-      form.appendChild(card);
-    });
+<script>
+let questions = [
+  {q: "What is the sum of 7.16 + 3.14 from Exercise 6.2?", options: ["10.3", "10.20", "10.32"], answer: 0},
+  {q: "Evaluate 2.165 + 3.278 from Exercise 6.2.", options: ["5.443", "5.343", "5.433"], answer: 0},
+  {q: "Find the value of 14.354 + 9.109 from Exercise 6.2.", options: ["23.463", "23.453", "22.463"], answer: 0},
+  {q: "What is 21.7 - 4.69 from Exercise 6.2?", options: ["17.01", "17.11", "16.01"], answer: 0},
+  {q: "Subtract: 3 - 1.013 from Exercise 6.2.", options: ["1.987", "2.987", "1.087"], answer: 0},
+  {q: "Evaluate 11.111 - 1.111 from Exercise 6.2.", options: ["10", "10.222", "11"], answer: 0},
+  {q: "Simplify 3.4 + 5 - 6.4 from Exercise 6.2.", options: ["2", "14.8", "3"], answer: 0},
+  {q: "Simplify 3.28 + 1.63 - 4.9 from Exercise 6.2.", options: ["0.01", "0.1", "0"], answer: 0},
+  {q: "What should be added to 3.189 to get 7? (Exercise 6.2, Q4)", options: ["3.811", "4.811", "3.911"], answer: 0},
+  {q: "What should be added to the difference of 3.14 and 1.674 to get 9? (Exercise 6.2, Q5)", options: ["7.534", "7.466", "10.466"], answer: 0},
+  {q: "By how much is the sum of 14.28 and 11.219 greater than their difference? (Exercise 6.2, Q6)", options: ["22.438", "25.499", "28.56"], answer: 0},
+  {q: "Find the product 6.345 × 10 from Exercise 6.3.", options: ["63.45", "634.5", "0.6345"], answer: 0},
+  {q: "Find the product 36.791 × 100 from Exercise 6.3.", options: ["3679.1", "367.91", "36791"], answer: 0},
+  {q: "Find the product 0.2416 × 1000 from Exercise 6.3.", options: ["241.6", "24.16", "2416"], answer: 0},
+  {q: "Find the product 2.31 × 50 from Exercise 6.3.", options: ["115.5", "11.55", "1155"], answer: 0},
+  {q: "Evaluate 1.2 × 2.1 from Exercise 6.3.", options: ["2.52", "25.2", "0.252"], answer: 0},
+  {q: "Evaluate 7.18 × 3.75 from Exercise 6.3.", options: ["26.925", "269.25", "2.6925"], answer: 0},
+  {q: "What is the quotient 364.19 ÷ 10 from Exercise 6.3?", options: ["36.419", "3641.9", "3.6419"], answer: 0},
+  {q: "Find the quotient 479.23 ÷ 100 from Exercise 6.3.", options: ["4.7923", "47.923", "0.47923"], answer: 0},
+  {q: "Find the quotient 1.673 ÷ 1000 from Exercise 6.3.", options: ["0.001673", "0.01673", "0.0001673"], answer: 0},
+  {q: "Evaluate 108.5 ÷ 50 from Exercise 6.3.", options: ["2.17", "21.7", "0.217"], answer: 0},
+  {q: "Find the value of 8 ÷ 1.6 from Exercise 6.3.", options: ["5", "0.5", "50"], answer: 0},
+  {q: "Find the value of 11.13 ÷ 2.1 from Exercise 6.3.", options: ["5.3", "0.53", "53"], answer: 0},
+  {q: "Simplify 3.1 × 4 - 6.2 × 2 from Exercise 6.3.", options: ["0", "24.8", "6.2"], answer: 0},
+  {q: "Convert 6 cm into meters (m) as in Exercise 6.3, Q6(v).", options: ["0.06 m", "0.6 m", "600 m"], answer: 0},
+  {q: "Convert 37 dag into kilograms (kg) as in Exercise 6.3, Q6(vi).", options: ["0.37 kg", "3.7 kg", "0.037 kg"], answer: 0},
+  {q: "Convert 1.23 kg into grams (g) as in Exercise 6.3, Q6(viii).", options: ["1230 g", "123 g", "12300 g"], answer: 0},
+  {q: "In a 100 m race, Virender covered 68.8 m. How much distance remains? (Exercise 6.3, Q7)", options: ["31.2 m", "32.2 m", "41.2 m"], answer: 0},
+  {q: "How much would a dozen apples cost if each apple is ₹8.35? (Exercise 6.3, Q8)", options: ["₹100.20", "₹83.50", "₹10.02"], answer: 0},
+  {q: "From ₹500, Khushi bought 4 ice creams at ₹13.50 each and 2 pastries at ₹56.25 each. Money left? (Exercise 6.3, Q10)", options: ["₹333.50", "₹166.50", "₹343.50"], answer: 0}
+];
 
-    function gradeQuiz() {
-      let score = 0;
-      quizData.forEach((item, idx) => {
-        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
-        const fb = document.getElementById(`fb-${idx}`);
-        fb.style.display = "block";
-        if (selected && Number(selected.value) === item.answer) {
-          score++;
-          fb.className = "feedback correct";
-          fb.textContent = `Correct! Answer: ${item.options[item.answer]}`;
-        } else {
-          fb.className = "feedback incorrect";
-          fb.textContent = `Incorrect. Correct answer: ${item.options[item.answer]}`;
-        }
-      });
-      document.getElementById("score-box").textContent = `Score: ${score} / ${quizData.length}`;
-    }
-  </script>
+let current = 0, score = 0, currentShuffledOptions = [], correctTextForCurrentQuestion = "";
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Quiz Completed! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<div class="clue-text">Question ${current + 1} of ${questions.length}:</div><div class="target-word">${q.q}</div>`;
+  currentShuffledOptions.forEach((opt, index) => { html += `<button onclick="check(${index})">${opt}</button>`; });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) btn.style.background = "#a8e6a3";
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) btn.style.background = "#ffb3b3";
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) { score++; correctSound.play().catch(e => {}); }
+  else { wrongSound.play().catch(e => {}); }
+
+  document.getElementById("score").innerText = "Score: " + score + " / " + questions.length;
+  setTimeout(() => { current++; loadQuestion(); }, 1500);
+}
+loadQuestion();
+</script>
 </body>
 </html>
