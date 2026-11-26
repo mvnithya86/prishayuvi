@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5: Fractions — Set 2 Word Problems (30 Questions)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #cfe8f7; text-align: center; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 550px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .clue-text { font-size: 18px; color: #555; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .target-word { font-size: 20px; font-weight: bold; color: #2c3e50; background: #e8f4f8; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; }
+    button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 10px; border: none; background: #fff4b3; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #ffeaa7; }
+    #score { font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    #result { font-size: 24px; font-weight: bold; color: #27ae60; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<h2>📝 Chapter 5: Fractions — Word Problems (30 Questions)</h2>
+<div id="score">Score: 0 / 30</div>
+<div class="box" id="quiz"></div>
+<div id="result"></div>
+
+<script>
+let questions = [
+  {q: "A ribbon of length 2 3/4 m and another ribbon of length 1 5/8 m are joined together. What is the total length of the combined ribbon?", options: ["4 3/8 m", "3 8/12 m", "4 1/8 m"], answer: 0},
+  {q: "An iceberg 72 m tall is floating in the ocean. If 5/8 of its total height is underwater, how many metres of the iceberg can be seen above the water?", options: ["27 m", "45 m", "36 m"], answer: 0},
+  {q: "A rope 15 3/4 m long is cut into equal pieces of length 1 3/4 m each. How many pieces are obtained?", options: ["9 pieces", "8 pieces", "11 pieces"], answer: 0},
+  {q: "How many glasses of 1/5 L capacity can be completely filled from a 3 3/5 L jug of mango juice?", options: ["18 glasses", "15 glasses", "20 glasses"], answer: 0},
+  {q: "Riya received ₹ 500 from her aunt. She spent 2/5 of it on a novel and 1/4 of the total amount on stationery. How much money is left with Riya?", options: ["₹ 175", "₹ 325", "₹ 200"], answer: 0},
+  {q: "A pizza was shared among three friends. Aarav ate 3/8 of the pizza, Diya ate 1/3 of the pizza, and Kabir ate the remaining part. Who ate the largest share of the pizza?", options: ["Aarav", "Diya", "Kabir"], answer: 0},
+  {q: "If 1 kg of almonds costs ₹ 640, how much will 2 3/8 kg of almonds cost?", options: ["₹ 1,520", "₹ 1,480", "₹ 1,600"], answer: 0},
+  {q: "In a school of 640 students, 9/16 are boys. How many girls study in the school?", options: ["280 girls", "360 girls", "320 girls"], answer: 0},
+  {q: "A cyclist covers a total distance of 36 km. He covers 4/9 of the journey in the first hour and 1/3 of the journey in the second hour. What distance is left for him to cover?", options: ["8 km", "12 km", "16 km"], answer: 0},
+  {q: "A carpenter has a wooden plank 5 5/6 m long. He cuts off a piece measuring 5/6 m and divides the remaining plank into 4 equal parts. What is the length of each small part?", options: ["1 1/4 m", "1 1/2 m", "1 1/6 m"], answer: 0},
+  {q: "A jug can hold 3/5 L of milk. How many full jugs are needed to fill an empty container of capacity 5 2/5 L?", options: ["9 jugs", "8 jugs", "10 jugs"], answer: 0},
+  {q: "Four notebooks cost ₹ 18 1/2 each and three pens cost ₹ 12 1/4 each. Which costs more in total—the notebooks or the pens—and by how much?", options: ["Notebooks by ₹ 37 1/4", "Pens by ₹ 37 1/4", "Notebooks by ₹ 36 3/4"], answer: 0},
+  {q: "From a tank containing 60 L of water, 1/12 of the water is poured into a leaking bucket. If 5/12 L of water leaks out of the bucket every minute, in how many minutes will the bucket become completely empty?", options: ["12 minutes", "15 minutes", "10 minutes"], answer: 0},
+  {q: "1 1/4 kg of spoiled apples are removed from a basket containing 8 3/4 kg of apples. The remaining good apples are packed equally into 15 bags. What is the weight of apples in each bag?", options: ["1/2 kg", "3/4 kg", "2/5 kg"], answer: 0},
+  {q: "In a school with 720 students, 1/6 study in Class VI. Out of the Class VI students, 3/5 are girls, and 1/4 of those girls participated in a science exhibition. How many girls from Class VI participated in the exhibition?", options: ["18 girls", "72 girls", "24 girls"], answer: 0},
+  {q: "What fraction of a day is 8 hours?", options: ["1/3", "1/4", "2/3"], answer: 0},
+  {q: "A boy is 1 3/4 m tall and stands in a pool where 2/7 of his height is under water. How many metres of his height can be seen above water?", options: ["1 1/4 m", "1/2 m", "1 3/7 m"], answer: 0},
+  {q: "A 2/5 m piece is cut off from a 7 1/2 m ribbon, and the remaining ribbon is cut into 7 equal pieces. What is the length of each small piece?", options: ["1 1/70 m", "1 m", "1 1/14 m"], answer: 0},
+  {q: "If 2 1/2 kg of mangoes cost ₹ 175, what is the cost of 1 kg of mangoes?", options: ["₹ 70", "₹ 85", "₹ 65"], answer: 0},
+  {q: "A mason needs to lay 540 bricks to build a wall. After laying 5/9 of the bricks, he takes a break. How many bricks remain to be laid?", options: ["240 bricks", "300 bricks", "180 bricks"], answer: 0},
+  {q: "A crate contains 40 fruits. If 2/5 of them are oranges and 1/4 of the remaining fruits are apples, how many apples are in the crate?", options: ["6 apples", "16 apples", "10 apples"], answer: 0},
+  {q: "A box has 96 pens. If 5/12 of the pens are blue and 3/8 of the pens are black, how many pens are neither blue nor black?", options: ["20 pens", "40 pens", "36 pens"], answer: 0},
+  {q: "Meera completes 3/8 of her project on Monday and 2/5 of it on Tuesday. What fraction of the project is still left to complete?", options: ["9/40", "31/40", "1/8"], answer: 0},
+  {q: "A runner finishes 3/4 of a 1,600 m race before resting. How many metres remain for him to finish the race?", options: ["400 m", "1,200 m", "600 m"], answer: 0},
+  {q: "A bottle holds 3 1/2 L of juice. How many cups of 1/4 L capacity can be filled from it?", options: ["14 cups", "12 cups", "7 cups"], answer: 0},
+  {q: "A traveler covers 2/5 of a journey by train, 1/3 by bus, and the remaining 16 km on foot. What is the total length of the journey?", options: ["60 km", "48 km", "75 km"], answer: 0},
+  {q: "A jar contains 240 mL of syrup mixed with water. If 3/8 of the mixture is syrup, how much water is in the jar?", options: ["150 mL", "90 mL", "120 mL"], answer: 0},
+  {q: "Ananya reads 1/5 of a book on Saturday and 1/3 of the remaining book on Sunday. What fraction of the whole book has she read in total?", options: ["7/15", "8/15", "2/5"], answer: 0},
+  {q: "A bucket can hold 4 1/2 L of water. If 2/3 of the bucket is full, how many more litres of water are needed to fill it completely?", options: ["1 1/2 L", "3 L", "2 1/4 L"], answer: 0},
+  {q: "A tank has 84 L of water. 1/7 of the water is taken out into a container, and then 2/3 of the water in that container is used. How much water is left in the container?", options: ["4 L", "8 L", "12 L"], answer: 0}
+];
+
+let current = 0, score = 0, currentShuffledOptions = [], correctTextForCurrentQuestion = "";
+let clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+let correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/boing.ogg");
+let wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("quiz").innerHTML = "";
+    document.getElementById("result").innerHTML = "🎉 Quiz Completed! Final Score: " + score + " / " + questions.length;
+    return;
+  }
+  let q = questions[current];
+  correctTextForCurrentQuestion = q.options[q.answer];
+  currentShuffledOptions = shuffle([...q.options]);
+
+  let html = `<div class="clue-text">Question ${current + 1} of ${questions.length}:</div><div class="target-word">${q.q}</div>`;
+  currentShuffledOptions.forEach((opt, index) => { html += `<button onclick="check(${index})">${opt}</button>`; });
+  document.getElementById("quiz").innerHTML = html;
+}
+
+function check(selectedIndex) {
+  clickSound.play().catch(e => {});
+  let selectedText = currentShuffledOptions[selectedIndex];
+  let buttons = document.querySelectorAll("#quiz button");
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (currentShuffledOptions[idx] === correctTextForCurrentQuestion) btn.style.background = "#a8e6a3";
+    if (idx === selectedIndex && selectedText !== correctTextForCurrentQuestion) btn.style.background = "#ffb3b3";
+  });
+
+  if (selectedText === correctTextForCurrentQuestion) { score++; correctSound.play().catch(e => {}); }
+  else { wrongSound.play().catch(e => {}); }
+
+  document.getElementById("score").innerText = "Score: " + score + " / " + questions.length;
+  setTimeout(() => { current++; loadQuestion(); }, 1500);
+}
+loadQuestion();
+</script>
+</body>
+</html>
